@@ -6,6 +6,8 @@ A support app for Verdant & Co. Customers send messages, AI suggests replies, an
 
 Webhook: `POST https://verdant-care-desk.onrender.com/webhook`. Agent login details are shared privately. The free server may take about a minute to wake up after being idle.
 
+See [the webhook guide](WEBHOOK.md) for copy-and-run commands, the JSON body, required headers and expected responses. Opening the webhook link in a browser does not send a message.
+
 ## Run on your computer
 
 You need Node.js 22 or above.

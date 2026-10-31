@@ -20,8 +20,8 @@ Reviewed against the six-page supplied assessment on 31 October 2026. This disti
 | Customer sees own conversation and approved replies, never drafts | Scoped customer session and explicit customer-safe API projection | Integration tests; browser end-to-end check |
 | Customer send follows the same saving and AI behavior as a webhook | Both call the same ingestion transaction and create the same type of job | Integration tests |
 | Customer requires no sign-in; agent does | Public test-customer selector; separate agent login | Browser verification |
-| Deployed working app, test agent details, webhook URL | Deployment instructions and Dockerfile prepared | **Not complete: deployment and public verification still required** |
-| GitHub repository with no secrets and example environment file | `.env.example`, ignored `.env`, source files prepared | **Not complete: repository creation/sharing and tracked-file review still required** |
+| Deployed working app, test agent details, webhook URL | Render Free app deployed; URLs in LIVE_VERIFICATION.md | Public customer/approval/webhook/live flow verified; share evaluator credentials privately |
+| GitHub repository with no secrets and example environment file | Private Dipen-t/verdant-care-desk repository; `.env.example`, ignored `.env` | Files checked for saved secrets before upload; evaluator repository access still required |
 | Short README covering local run, decisions, cuts, AI assistance, both questions | README plus a separate detailed setup guide | Final candidate review and one-page presentation check remain |
 | Demo video <=3 minutes | Recording checklist in setup guide | **Not recorded** |
 

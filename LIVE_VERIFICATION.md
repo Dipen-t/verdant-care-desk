@@ -39,7 +39,20 @@ All 32 automated tests, TypeScript checking and the production build passed, inc
 
 ## Still required before submission
 
-Public application deployment and public webhook verification, GitHub repository creation/sharing, final README selection, and the demo video remain. Free-model capacity and account quotas can affect future availability.
+Private repository access for the evaluator and the demo video remain. Share hosted test-agent credentials privately. Free-model capacity and account quotas can affect future availability.
+
+## Public deployment
+
+On 31 October 2026, Render deployed commit `5f2bc1e` as one Docker **Free** web service in the user-approved My Projects workspace. No paid database, disk or separate worker was created. The existing Supabase project supplies storage, authentication and Realtime. The Supabase admin key was excluded from Render.
+
+- App: https://verdant-care-desk.onrender.com
+- Webhook: https://verdant-care-desk.onrender.com/webhook
+- Private repository: https://github.com/Dipen-t/verdant-care-desk
+- Health path: `/api/health`
+
+Checks through the public HTTPS service passed: customer send and idempotent retry; actual AI draft generation; authenticated agent review; concurrent identical approvals yielding one edited reply; customer-safe transcript; persisted receipts; signed webhook and duplicate suppression; and private Supabase broadcasts reaching authorized SSE streams. Anonymous streams returned 401, customer streams excluded draft activity and other customers. Verification used Maya's fictional test conversation and left the user's pending Aisha draft untouched.
+
+Render Free can sleep when idle, pausing the worker until the service wakes. A first visit may therefore take around a minute. Cold-start behavior after a full idle period has not been separately timed.
 
 ## Code-quality follow-up
 

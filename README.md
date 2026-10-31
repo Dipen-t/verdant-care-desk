@@ -30,9 +30,9 @@ Supabase handles agent sign-in and live updates. Ticks show whether a message wa
 
 Left out: real WhatsApp sending, attachments, multiple languages and multiple brands. Customers are sample identities. Smaller message batches and better monitoring are future work.
 
-## What has been checked
+## Testing
 
-All 32 tests and the build pass. The public app was tested with Supabase sign-in, real AI drafts, edited approvals, duplicate handling, signed webhooks, receipts and live updates. See [LIVE_VERIFICATION.md](LIVE_VERIFICATION.md).
+All 32 automated tests pass, and the app builds successfully. The deployed app was also checked for agent login, real AI drafts, edited approvals, duplicate messages, signed webhooks, message ticks and live updates. Run `npm test` to check the automated tests. Detailed results are in [LIVE_VERIFICATION.md](LIVE_VERIFICATION.md).
 
 ## AI help
 

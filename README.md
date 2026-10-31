@@ -2,6 +2,10 @@
 
 A support app for Verdant & Co. Customers send messages, AI suggests replies, and agents check, edit and approve them. Customers see only approved replies.
 
+[Open the app](https://verdant-care-desk.onrender.com) · [GitHub repository](https://github.com/Dipen-t/verdant-care-desk)
+
+Webhook: `POST https://verdant-care-desk.onrender.com/webhook`. Agent login details are shared privately. The free server may take about a minute to wake up after being idle.
+
 ## Run on your computer
 
 You need Node.js 22 or above.
@@ -28,7 +32,7 @@ Left out: real WhatsApp sending, attachments, multiple languages and multiple br
 
 ## What has been checked
 
-All 32 tests and the build pass. Supabase sign-in, database storage, real AI replies, duplicate approval handling and live updates were checked. See [LIVE_VERIFICATION.md](LIVE_VERIFICATION.md). Public hosting and testing on the hosted link are still pending.
+All 32 tests and the build pass. The public app was tested with Supabase sign-in, real AI drafts, edited approvals, duplicate handling, signed webhooks, receipts and live updates. See [LIVE_VERIFICATION.md](LIVE_VERIFICATION.md).
 
 ## AI help
 
@@ -39,3 +43,4 @@ Codex helped with research, code and tests. Its first database setup used the wr
 **What if something fails at 2 a.m.?** If the message was saved, the agent can still see it; the AI task can retry or show a failure with a Retry option. Logs contain IDs and error codes to help find the problem, and unfinished tasks can recover after restart. If saving itself fails, the webhook returns an error so the sender can try again.
 
 **What would change for 20 brands?** First, make sure each agent can access only their own brand's customers, messages and policies. Then give each brand its own policies, webhook credentials and usage limits to keep their data separate and control costs.
+

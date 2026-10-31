@@ -102,8 +102,9 @@ The host must preserve the original request hostname for the same-origin checks 
 - Run `npm run webhook:send -- https://YOUR-HOST/webhook` and verify the same flow.
 - Run all five policy examples and a prompt-injection attempt with the actual provider. Also test exactly INR 3,000 for COD.
 - Interrupt provider access, verify visible failure/retry, restore access and retry. Confirm the message is preserved.
-- Ensure the GitHub repository excludes `.env`, `.data` and credentials. Share agent test credentials privately through the required submission channel, not in the public README.
+- Ensure the GitHub repository excludes `.env`, `.data`, database credentials and API/admin keys. For this assessment, the user requested the shared demo agent login in the README; use it only with fictional data and remove that access when the demo is no longer needed.
 - Record a video no longer than three minutes: customer send; agent sign-in/draft/edit/approval; customer reply; explain transactional jobs, full-policy prompting and one improvement.
-- Resolve the conflicting form links with HR; submit app/repository/webhook/video links and test agent details through the correct form. Keep the deployment active until a hiring decision.
+- Complete the form's Assessment Deliverables section with the app URL, demo login, public repository URL, video upload and supporting webhook guide. The user confirmed these fields appear in a later form section. Keep the deployment active until a hiring decision.
 
 The current customer selector intentionally exposes shared fictional test identities to anyone who opens the demo. Signed cookies scope each request but do not verify real customer ownership. Never load real customer data into this sandbox.
+

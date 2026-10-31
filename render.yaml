@@ -1,0 +1,43 @@
+# One free web service. PostgreSQL/Auth/Realtime use the existing Supabase project.
+# Secrets are entered in Render, never committed here.
+services:
+  - type: web
+    name: verdant-care-desk
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: LOCAL_DEMO_AUTH
+        value: "false"
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: WEBHOOK_SECRET
+        value: verdant-demo-secret-2026
+      - key: LLM_BASE_URL
+        value: https://openrouter.ai/api/v1
+      - key: LLM_API_KEY
+        sync: false
+      - key: LLM_MODEL
+        sync: false
+      - key: LLM_FALLBACK_MODELS
+        value: nvidia/nemotron-3.5-super-vl:free
+      - key: WORKER_ENABLED
+        value: "true"
+      - key: REALTIME_ENABLED
+        value: "true"
+      - key: AGENT_EMAIL
+        sync: false
+      - key: AGENT_PASSWORD
+        sync: false

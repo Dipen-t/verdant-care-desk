@@ -1,0 +1,15 @@
+import { config, assertProductionConfig } from './config.js';
+import { createDatabase, migrate } from './db.js';
+import { buildApp } from './app.js';
+import { startWorker } from './worker.js';
+import { startRealtimeBridge } from './realtime.js';
+assertProductionConfig();
+const db = await createDatabase();
+await migrate(db);
+const app = await buildApp(db);
+const stopRealtime=startRealtimeBridge(data => app.log.info(data,'Live updates'));
+const stopWorker = process.env.WORKER_ENABLED === 'false' ? async () => {} : startWorker(db,data => app.log.info(data,'Draft job'));
+app.addHook('onClose',async () => { await stopRealtime(); await stopWorker(); await db.close(); });
+for (const signal of ['SIGINT','SIGTERM'] as const) process.once(signal,() => { void app.close(); });
+await app.listen({ port: config.port,host: config.host });
+if (!config.llmKey || !config.llmModel) app.log.warn('LLM is not configured. Messages are saved; drafts will show a recoverable setup failure.');

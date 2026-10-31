@@ -60,3 +60,8 @@ Session validation and authorization are isolated in `server/sessions.ts`; strea
 
 Versioned migrations, full database row typing, pagination and operational load testing remain production follow-ups.
 
+## UX follow-up
+
+The customer dropdown is directly visible; sample questions have their own menu. Every draft shows the exact customer question it answers, including waiting and failed states. Pending drafts explain that the message is saved and the AI is preparing a reply; failed drafts offer an explicit retry. Clicking or tapping message ticks opens a keyboard-accessible native dialog with receipt timestamps and a plain-language explanation.
+
+All 32 regression tests and the production build passed. An isolated local fixture verified customer switching, matching questions while switching drafts, failed-draft retry to ready, and status-dialog opening, closing and Escape focus restoration. A 320px-wide iframe verified the visible customer selector, status dialog and agent navigation. The agent approval action remains visible while scrolling the draft on narrow screens. The fixture uses synthetic data and an injected generator, is excluded from deployment, and is not a physical-device touch/keyboard test.

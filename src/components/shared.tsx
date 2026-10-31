@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { ArrowDown, Check, CheckCheck, CircleAlert, LoaderCircle, MessageCircle, X } from 'lucide-react';
 import type { Message } from '../api';
 import { useMessageReceipts } from './useMessageReceipts';
@@ -50,12 +50,26 @@ function dayLabel(value: string) {
   return date.toLocaleDateString([], { day: 'numeric', month: 'long', year: date.getFullYear() === today.getFullYear() ? undefined : 'numeric' });
 }
 function ReceiptTicks({ message,agentView }: { message:Message;agentView:boolean }) {
+  const [open, setOpen] = useState(false);
+  const dialog = useRef<HTMLDialogElement>(null);
+  const headingId = useId();
+  useEffect(() => { if (open && dialog.current && !dialog.current.open) dialog.current.showModal(); }, [open]);
   const read=Boolean(message.recipient_read_at),received=Boolean(message.recipient_received_at);
   const label=read?'Viewed':received?'Received':'Saved';
   const recipient=agentView?'customer':'support team';
   const detail=read?`Viewed by the ${recipient}`:received?`Received by the ${recipient}’s app`:'Saved by the server';
   const date=message.recipient_read_at||message.recipient_received_at;
-  return <span className={`receipt-ticks ${read?'viewed':''}`} role="img" aria-label={label} title={`${detail}${date?` · ${new Date(date).toLocaleString()}`:''}`} tabIndex={0}>{read||received?<CheckCheck size={15}/>:<Check size={15}/>}</span>;
+  return <><button type="button" className={`receipt-ticks ${read?'viewed':''}`} aria-label={`${label}. Show message status`} aria-haspopup="dialog" title={`${detail}${date?` · ${new Date(date).toLocaleString()}`:''}`} onClick={() => setOpen(true)}>{read||received?<CheckCheck size={15}/>:<Check size={15}/>}</button>
+    {open && <dialog ref={dialog} className="message-status-dialog" aria-labelledby={headingId} onClose={() => setOpen(false)} onClick={event => { if (event.target === event.currentTarget) dialog.current?.close(); }}>
+      <div className="message-status-content"><header><h2 id={headingId}>Message status</h2><button className="icon-button" autoFocus onClick={() => dialog.current?.close()} aria-label="Close message status"><X size={18}/></button></header>
+        <p className="current-message-status">{label}</p><p>{detail}.</p>
+        <dl><div><dt>Saved</dt><dd>{new Date(message.received_at).toLocaleString()}</dd></div>
+          <div><dt>Received</dt><dd>{message.recipient_received_at ? new Date(message.recipient_received_at).toLocaleString() : `Waiting for the ${recipient}’s app`}</dd></div>
+          <div><dt>Viewed</dt><dd>{message.recipient_read_at ? new Date(message.recipient_read_at).toLocaleString() : 'Not marked as viewed yet'}</dd></div></dl>
+        <p className="message-status-hint">One tick means saved, two ticks mean received, and blue ticks mean viewed in this app.</p>
+      </div>
+    </dialog>}
+  </>;
 }
 export function Transcript({ messages, customerName, agentView = false, onRetry, retryDisabled, emptyActions }: { messages: Message[]; customerName: string; agentView?: boolean; onRetry?: (requestId: string) => void; retryDisabled?: boolean; emptyActions?: ReactNode }) {
   const container = useRef<HTMLDivElement>(null);

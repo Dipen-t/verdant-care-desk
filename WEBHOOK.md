@@ -45,7 +45,7 @@ A new valid message returns HTTP **202**, followed by a response like:
 
 202 means the message and its AI task were saved. The AI draft is generated afterwards; it may take a little time.
 
-Open [the deployed app](https://verdant-care-desk.onrender.com), switch to **Agent**, and sign in with the [demo login in the README](README.md#deployed-app-login). Open **Aisha Khan** to see the message and its draft. Edit the draft and click **Approve reply**. Switch to **Customer**, open **Test customer**, and choose Aisha to see the approved reply. Drafts are never shown to the customer.
+Open [the deployed app](https://verdant-care-desk.onrender.com), switch to **Agent**, and sign in with the [demo login in the README](README.md#deployed-app-login). Open **Aisha Khan** to see the message and its draft. The original customer question appears above each draft. Edit the draft and click **Approve reply**. Switch to **Customer** and choose Aisha from the visible **Test customer** dropdown to see the approved reply. Drafts are never shown to the customer. Tap or click a message's ticks to see whether it was saved, received or viewed.
 
 ## 3. Exact request format
 

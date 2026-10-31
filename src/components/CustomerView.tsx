@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowUp, ChevronDown, Settings2, WifiOff, X } from 'lucide-react';
+import { ArrowUp, ChevronDown, UsersRound, WifiOff, X } from 'lucide-react';
 import type { AppConfig } from '../api';
 import { Avatar, clearDraft, readDraft, Spinner, Transcript, writeDraft } from './shared';
 import { useCustomerChat } from './useCustomerChat';
@@ -52,12 +52,12 @@ export function CustomerView({ config }: { config: AppConfig }) {
         <Avatar name="Verdant" brand />
         <div><h1>Customer support</h1><p>Chatting as {customer.name}</p></div>
         <details className="demo-settings" ref={settings}>
-          <summary><Settings2 size={16} /><span>Demo settings</span><ChevronDown size={12} /></summary>
+          <summary><UsersRound size={16} /><span>Test customer</span><ChevronDown size={12} /></summary>
           <div className="demo-settings-menu">
-            <header><strong>Demo settings</strong><button className="icon-button" onClick={() => { if (settings.current) settings.current.open = false; }} aria-label="Close demo settings"><X size={17} /></button></header>
-            <label htmlFor="customer">Test customer</label>
+            <header><strong>Test customer</strong><button className="icon-button" onClick={() => { if (settings.current) settings.current.open = false; }} aria-label="Close test customer menu"><X size={17} /></button></header>
+            <label htmlFor="customer">Choose a customer</label>
             <select id="customer" value={customerId} disabled={chat.busy || chat.loading} onChange={e => changeCustomer(e.target.value)}>{config.customers.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
-            <p>Fictional accounts in a shared test space.</p>
+            <p>Choose who you want to message as. These are sample customers.</p>
             <h2>Sample messages</h2>
             {samples.map(sample => <button className="demo-sample" key={sample.title} onClick={() => useSample(sample.text)}>{sample.title}</button>)}
           </div>

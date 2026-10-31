@@ -45,7 +45,7 @@ A new valid message returns HTTP **202**, followed by a response like:
 
 202 means the message and its AI task were saved. The AI draft is generated afterwards; it may take a little time.
 
-Open [the deployed app](https://verdant-care-desk.onrender.com), switch to **Agent**, and sign in with the [demo login in the README](README.md#deployed-app-login). Open **Aisha Khan** to see the message and its draft. Edit the draft and click **Approve reply**. Switch to **Customer**, open **Demo settings**, and choose Aisha to see the approved reply. Drafts are never shown to the customer.
+Open [the deployed app](https://verdant-care-desk.onrender.com), switch to **Agent**, and sign in with the [demo login in the README](README.md#deployed-app-login). Open **Aisha Khan** to see the message and its draft. Edit the draft and click **Approve reply**. Switch to **Customer**, open **Test customer**, and choose Aisha to see the approved reply. Drafts are never shown to the customer.
 
 ## 3. Exact request format
 
@@ -111,4 +111,3 @@ Here `payload` is the JSON object above and `createHmac` comes from `node:crypto
 | GET shows `Endpoint not found` | Use the signed POST command above |
 
 The Free Render server can take around a minute to wake up after being idle. An AI provider failure can leave a saved message with a failed draft; the agent can retry it. A successful 202 response does not guarantee that AI generation has already finished.
-

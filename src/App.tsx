@@ -21,7 +21,7 @@ export function App() {
         <button aria-pressed={mode === 'customer'} onClick={() => setMode('customer')}>Customer</button>
         <button aria-pressed={mode === 'agent'} onClick={() => setMode('agent')}>Agent</button>
       </nav>
-      <span className="sandbox-label"><span />Demo workspace</span>
+      <span className="sandbox-label"><span />Verdant support</span>
     </header>
     {error ? <main className="boot-error"><ErrorNotice text={`${error} Check that the API server is running.`} /><button className="secondary-button" onClick={() => window.location.reload()}>Try again</button></main>
       : config ? mode === 'customer' ? <CustomerView config={config} /> : <AgentView config={config} />

@@ -39,7 +39,7 @@ All 32 automated tests, TypeScript checking and the production build passed, inc
 
 ## Still required before submission
 
-Private repository access for the evaluator and the demo video remain. Share hosted test-agent credentials privately. Free-model capacity and account quotas can affect future availability.
+The demo video remains. The repository is now public, and the user explicitly requested publishing the existing assessment demo login in README.md. That login was checked against the deployed app before publication; no additional account was created. Database, API and Supabase admin credentials remain private. Free-model capacity and account quotas can affect future availability.
 
 ## Public deployment
 
@@ -47,7 +47,7 @@ On 31 October 2026, Render deployed commit `5f2bc1e` as one Docker **Free** web 
 
 - App: https://verdant-care-desk.onrender.com
 - Webhook: https://verdant-care-desk.onrender.com/webhook
-- Private repository: https://github.com/Dipen-t/verdant-care-desk
+- Public repository: https://github.com/Dipen-t/verdant-care-desk
 - Health path: `/api/health`
 
 Checks through the public HTTPS service passed: customer send and idempotent retry; actual AI draft generation; authenticated agent review; concurrent identical approvals yielding one edited reply; customer-safe transcript; persisted receipts; signed webhook and duplicate suppression; and private Supabase broadcasts reaching authorized SSE streams. Anonymous streams returned 401, customer streams excluded draft activity and other customers. Verification used Maya's fictional test conversation and left the user's pending Aisha draft untouched.
@@ -59,3 +59,4 @@ Render Free can sleep when idle, pausing the worker until the service wakes. A f
 Session validation and authorization are isolated in `server/sessions.ts`; stream lifecycle and bounded batching live in `server/eventStreams.ts`. Agent change metadata targets refetches: receipts skip inbox reloads and changes in other conversations skip the current transcript. Nearby duplicate notifications are coalesced, reconnects trigger full reconciliation, and polling remains the recovery path. Stream tests cover batching, privacy, large bursts and revocation. API responses default to `unknown`; sessions, provider login and receipt query results have explicit validation or types. Notification failures emit rate-limited, data-free warnings.
 
 Versioned migrations, full database row typing, pagination and operational load testing remain production follow-ups.
+

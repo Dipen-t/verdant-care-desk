@@ -20,8 +20,8 @@ Reviewed against the six-page supplied assessment on 31 October 2026. This disti
 | Customer sees own conversation and approved replies, never drafts | Scoped customer session and explicit customer-safe API projection | Integration tests; browser end-to-end check |
 | Customer send follows the same saving and AI behavior as a webhook | Both call the same ingestion transaction and create the same type of job | Integration tests |
 | Customer requires no sign-in; agent does | Public test-customer selector; separate agent login | Browser verification |
-| Deployed working app, test agent details, webhook URL | Render Free app deployed; URLs in LIVE_VERIFICATION.md | Public customer/approval/webhook/live flow verified; share evaluator credentials privately |
-| GitHub repository with no secrets and example environment file | Private Dipen-t/verdant-care-desk repository; `.env.example`, ignored `.env` | Files checked for saved secrets before upload; evaluator repository access still required |
+| Deployed working app, test agent details, webhook URL | Render Free app deployed; URLs in LIVE_VERIFICATION.md; verified demo login in README | Public customer/approval/webhook/live flow verified |
+| GitHub repository with no secrets and example environment file | Public Dipen-t/verdant-care-desk repository; `.env.example`, ignored `.env` | Database/API/admin credentials excluded; only the assessment demo login is intentionally public at the user's request |
 | Short README covering local run, decisions, cuts, AI assistance, both questions | README plus a separate detailed setup guide | Final candidate review and one-page presentation check remain |
 | Demo video <=3 minutes | Recording checklist in setup guide | **Not recorded** |
 
@@ -55,7 +55,7 @@ These references informed the interaction choices. The redesign does not copy th
 
 ## Submission ambiguities
 
-The email and PDF contain different form links, and the form the user inspected has no assessment-link fields. Confirm the correct channel with HR before submission. The seven-day deadline depends on the actual receipt date; the sample event timestamp does not establish it.
+The email and PDF contain different form links. The user subsequently reached the form's Assessment Deliverables section, which contains fields for the deployed application, test login, GitHub repository, video upload and optional supporting links. The earlier concern about missing link fields is resolved. The seven-day deadline depends on the actual receipt date; the sample event timestamp does not establish it.
 
 ## Alignment with the supplied job description
 
@@ -84,3 +84,4 @@ The job description informs stack alignment; it does not add requirements to the
 - Browser fixture results establish UI behavior only. Subsequent live Supabase/Auth/LLM verification is recorded separately in LIVE_VERIFICATION.md; model and free-tier availability can change.
 
 Customer usability follow-up: demo controls now live in a closed settings menu; empty chats offer starter questions that fill, rather than send, the composer. Per-message Sending/Sent/Retry states use an outbox persisted for the browser tab and customer. A saved request ID reconciles responses lost in transit, preserving idempotent retries. A server-stop/restart browser check verified visible failure, automatic banner recovery and a single saved message after explicit retry. A 320x320 viewport verified that the composer remains visible with reduced vertical space; this simulates keyboard space and is not a physical-device keyboard test.
+

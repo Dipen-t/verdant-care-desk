@@ -4,7 +4,16 @@ A support app for Verdant & Co. Customers send messages, AI suggests replies, an
 
 [Open the app](https://verdant-care-desk.onrender.com) · [GitHub repository](https://github.com/Dipen-t/verdant-care-desk)
 
-Webhook: `POST https://verdant-care-desk.onrender.com/webhook`. Agent login details are shared privately. The free server may take about a minute to wake up after being idle.
+Webhook: `POST https://verdant-care-desk.onrender.com/webhook`. The free server may take about a minute to wake up after being idle.
+
+## Deployed app login
+
+Open [the app](https://verdant-care-desk.onrender.com), switch to **Agent**, and use:
+
+- **Email:** `assessment-agent@verdant.example`
+- **Password:** `kP-eSwCyTRnbeNzuV86vK3j-9qJ72zji`
+
+This is the shared assessment demo account. It can review and approve replies in the fictional Verdant conversations. The Customer view does not require sign-in.
 
 See [the webhook guide](WEBHOOK.md) for copy-and-run commands, the JSON body, required headers and expected responses. Opening the webhook link in a browser does not send a message.
 

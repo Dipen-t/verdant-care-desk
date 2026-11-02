@@ -72,7 +72,7 @@ export function AgentView({ config }: { config: AppConfig }) {
     try { await api('/agent/logout', {}); setEmail(null); setList([]); setSelected(null); setConversation(null); inboxLoaded.current = false; setInboxState('loading'); initialSelectionMade.current = false; }
     catch (e) { setError(errorText(e)); }
   }
-  if (checking) return <main className="loading-space"><Spinner />Opening inboxâ€¦</main>;
+  if (checking) return <main className="loading-space"><Spinner />Opening inbox…</main>;
   if (!email) return <>{error && <div className="global-notice"><ErrorNotice text={error} /></div>}<SignIn config={config} onSignedIn={setEmail} /></>;
   return <main className={`agent-layout ${selected ? 'conversation-open' : ''}`}>
     <aside className="inbox-panel" aria-label="Conversation inbox">
@@ -82,7 +82,7 @@ export function AgentView({ config }: { config: AppConfig }) {
       <footer className="agent-account"><span className="account-avatar">{email[0].toUpperCase()}</span><div><strong>Agent account</strong><span>{email}</span></div><button className="icon-button" onClick={() => void logout()} aria-label="Sign out"><LogOut size={16} /></button></footer>
     </aside>
     <section className="agent-thread" aria-label="Selected conversation">
-      <header className="thread-header"><button className="icon-button inbox-back" onClick={() => { setSelected(null); selectedRef.current = null; }} aria-label="Back to inbox"><ArrowLeft size={20} /></button>{conversation ? <><Avatar name={conversation.name} /><div className="thread-person"><h2>{conversation.name}</h2><p>{conversation.phone}</p></div><button className="policies-button" aria-expanded={showPolicies} aria-controls="brand-policies" onClick={() => setShowPolicies(!showPolicies)}><BookOpen size={16} /><span>Policies</span></button></> : <h2>{loading ? 'Opening conversationâ€¦' : 'Conversations'}</h2>}</header>
+      <header className="thread-header"><button className="icon-button inbox-back" onClick={() => { setSelected(null); selectedRef.current = null; }} aria-label="Back to inbox"><ArrowLeft size={20} /></button>{conversation ? <><Avatar name={conversation.name} /><div className="thread-person"><h2>{conversation.name}</h2><p>{conversation.phone}</p></div><button className="policies-button" aria-expanded={showPolicies} aria-controls="brand-policies" onClick={() => setShowPolicies(!showPolicies)}><BookOpen size={16} /><span>Policies</span></button></> : <h2>{loading ? 'Opening conversation…' : 'Conversations'}</h2>}</header>
       {error && <div className="thread-notice"><ErrorNotice text={error} onClose={() => setError('')} /></div>}
       {approved && <div className="success-notice" role="status"><Check size={15} />Reply approved. The customer can see it now.</div>}
       {conversation ? <><Transcript key={conversation.id} messages={conversation.messages} customerName={conversation.name} agentView /><section className="reply-composer" aria-label="Review suggested reply">

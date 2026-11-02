@@ -65,6 +65,7 @@ export function AgentView({ config }: { config: AppConfig }) {
   }, [showPolicies]);
   const availableDrafts = conversation?.drafts.filter(d => d.state !== 'used') || [];
   const draft = availableDrafts.find(d => d.id === activeDraft) || availableDrafts.at(-1);
+  const openingInbox = inboxState === 'loading' && !inboxLoaded.current;
   const waiting = list.filter(c => c.pending_count > 0).length;
   const filtered = list.filter(c => (!needsReplyOnly || c.pending_count > 0) && `${c.name} ${c.phone} ${c.preview}`.toLowerCase().includes(filter.toLowerCase()));
   async function logout() {
@@ -87,7 +88,7 @@ export function AgentView({ config }: { config: AppConfig }) {
       {conversation ? <><Transcript key={conversation.id} messages={conversation.messages} customerName={conversation.name} agentView /><section className="reply-composer" aria-label="Review suggested reply">
         {availableDrafts.length > 1 && <div className="draft-picker"><label htmlFor="draft-selection">Reply to</label><div><select id="draft-selection" value={draft?.id || ''} onChange={e => setActiveDraft(e.target.value)}>{availableDrafts.map(d => <option key={d.id} value={d.id}>{conversation.messages.find(m => m.id === d.trigger_message_id)?.text.slice(0, 75)}</option>)}</select><ChevronDown size={13} /></div></div>}
         {draft ? <DraftEditor key={draft.id} draft={draft} conversation={conversation} policies={config.policies} onRefresh={refresh} onError={setError} onApproved={() => setApproved(true)} /> : <div className="all-replied"><Check size={17} /><span>All replies reviewed. New messages will appear here.</span></div>}
-      </section></> : <div className="unselected-thread">{loading ? <Spinner /> : <Inbox size={38} strokeWidth={1.1} />}<h2>{loading ? 'Loading conversation' : 'Choose a conversation'}</h2><p>Messages and suggested replies appear here.</p></div>}
+      </section></> : <div className="unselected-thread">{loading || openingInbox ? <Spinner /> : <Inbox size={38} strokeWidth={1.1} />}<h2>{openingInbox ? 'Loading conversations…' : loading ? 'Loading conversation' : 'Choose a conversation'}</h2><p>{openingInbox || loading ? 'Your messages will appear shortly.' : 'Messages and suggested replies appear here.'}</p></div>}
       {showPolicies && <section className="policies-panel" id="brand-policies" aria-label="Brand policies"><header><h2>Brand policies</h2><button className="icon-button" onClick={() => setShowPolicies(false)} aria-label="Close brand policies"><X size={18} /></button></header><p>Source of truth for suggested replies.</p>{config.policies.map(p => <section key={p.id}><h3>{p.id.replaceAll('-', ' ')}</h3><p>{p.text}</p></section>)}</section>}
     </section>
   </main>;

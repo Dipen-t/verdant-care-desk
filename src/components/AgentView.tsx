@@ -9,12 +9,13 @@ import { refreshTargets, type LiveChange } from '../liveChanges';
 
 export function AgentView({ config }: { config: AppConfig }) {
   const [email, setEmail] = useState<string | null>(null), [checking, setChecking] = useState(true);
+  const [inboxState, setInboxState] = useState<'loading' | 'ready' | 'error'>('loading');
   const [list, setList] = useState<ConversationSummary[]>([]), [selected, setSelected] = useState<string | null>(null);
   const [conversation, setConversation] = useState<Conversation | null>(null), [activeDraft, setActiveDraft] = useState('');
   const [error, setError] = useState(''), [filter, setFilter] = useState(''), [needsReplyOnly, setNeedsReplyOnly] = useState(false);
   const [loading, setLoading] = useState(false), [showPolicies, setShowPolicies] = useState(false), [approved, setApproved] = useState(false);
   const selectedRef = useRef(selected); selectedRef.current = selected;
-  const listRenderedIndex = useRef(0);
+  const listRenderedIndex = useRef(0), inboxLoaded = useRef(false);
   const requestIndex = useRef(0), renderedIndex = useRef(0), initialSelectionMade = useRef(false);
   useEffect(() => {
     let cancelled = false;
@@ -25,10 +26,13 @@ export function AgentView({ config }: { config: AppConfig }) {
   }, []);
   const refresh = useCallback(async (changes?: LiveChange[]) => {
     const id = selectedRef.current, index = ++requestIndex.current;
+    const targets = refreshTargets(changes, id);
+    let inboxFetched = false;
+    if (targets.inbox && !inboxLoaded.current) setInboxState('loading');
     try {
-      const targets = refreshTargets(changes, id);
       const rows = targets.inbox ? await api<ConversationSummary[]>('/agent/conversations') : null;
-      if (rows && index >= listRenderedIndex.current) { listRenderedIndex.current = index; setList(rows); }
+      inboxFetched = rows !== null;
+      if (rows && index >= listRenderedIndex.current) { listRenderedIndex.current = index; inboxLoaded.current = true; setList(rows); setInboxState('ready'); }
       if (!id && rows?.length && !initialSelectionMade.current) {
         initialSelectionMade.current = true;
         if (window.matchMedia('(min-width: 761px)').matches) { setSelected(rows[0].id); return; }
@@ -38,14 +42,20 @@ export function AgentView({ config }: { config: AppConfig }) {
         if (id === selectedRef.current && index >= renderedIndex.current) { renderedIndex.current = index; setConversation(detail); }
       }
     } catch (e) {
-      if (e instanceof ApiError && e.status === 401) setEmail(null); else setError(errorText(e));
+      if (e instanceof ApiError && e.status === 401) setEmail(null); else {
+        if (targets.inbox && !inboxFetched && !inboxLoaded.current) setInboxState('error');
+        else setError(errorText(e));
+      }
     }
   }, []);
   const live=useLiveUpdates('agent',refresh,Boolean(email));
   usePolling(refresh, Boolean(email),live?15000:3000);
   useEffect(() => {
     setConversation(null); setActiveDraft(''); setError(''); setApproved(false); setShowPolicies(false);
-    if (selected && email) { setLoading(true); void refresh().finally(() => setLoading(false)); }
+    let cancelled = false;
+    if (selected && email) { setLoading(true); void refresh().finally(() => { if (!cancelled) setLoading(false); }); }
+    else setLoading(false);
+    return () => { cancelled = true; };
   }, [selected, email, refresh]);
   useEffect(() => { if (!approved) return; const timer = setTimeout(() => setApproved(false), 5000); return () => clearTimeout(timer); }, [approved]);
   useEffect(() => {
@@ -58,20 +68,20 @@ export function AgentView({ config }: { config: AppConfig }) {
   const waiting = list.filter(c => c.pending_count > 0).length;
   const filtered = list.filter(c => (!needsReplyOnly || c.pending_count > 0) && `${c.name} ${c.phone} ${c.preview}`.toLowerCase().includes(filter.toLowerCase()));
   async function logout() {
-    try { await api('/agent/logout', {}); setEmail(null); setList([]); setSelected(null); initialSelectionMade.current = false; }
+    try { await api('/agent/logout', {}); setEmail(null); setList([]); setSelected(null); setConversation(null); inboxLoaded.current = false; setInboxState('loading'); initialSelectionMade.current = false; }
     catch (e) { setError(errorText(e)); }
   }
-  if (checking) return <main className="loading-space"><Spinner />Opening inbox…</main>;
+  if (checking) return <main className="loading-space"><Spinner />Opening inboxâ€¦</main>;
   if (!email) return <>{error && <div className="global-notice"><ErrorNotice text={error} /></div>}<SignIn config={config} onSignedIn={setEmail} /></>;
   return <main className={`agent-layout ${selected ? 'conversation-open' : ''}`}>
     <aside className="inbox-panel" aria-label="Conversation inbox">
       <header className="inbox-heading"><div><Inbox size={19} /><h1>Inbox</h1></div><button className="icon-button" onClick={() => void refresh()} aria-label="Refresh conversations"><RefreshCw size={16} /></button></header>
       <div className="inbox-tools"><label className="search-field"><Search size={16} /><span className="sr-only">Search conversations</span><input type="search" placeholder="Search conversations" value={filter} onChange={e => setFilter(e.target.value)} /></label><div className="inbox-filters" aria-label="Filter conversations"><button aria-pressed={!needsReplyOnly} onClick={() => setNeedsReplyOnly(false)}>All<span>{list.length}</span></button><button aria-pressed={needsReplyOnly} onClick={() => setNeedsReplyOnly(true)}>Needs reply<span>{waiting}</span></button></div></div>
-      <div className="inbox-list">{filtered.map(c => <button key={c.id} className={`conversation-item ${selected === c.id ? 'selected' : ''}`} aria-current={selected === c.id ? 'true' : undefined} onClick={() => setSelected(c.id)}><Avatar name={c.name} /><span className="conversation-copy"><span className="conversation-top"><strong>{c.name}</strong><time dateTime={c.last_activity_at}>{activityTime(c.last_activity_at)}</time></span><span className="conversation-preview">{c.preview}</span><span className="conversation-status">{c.pending_count > 0 ? <><span className="waiting-dot" />Needs reply</> : <><Check size={12} />Replied</>}</span></span></button>)}{!filtered.length && <div className="inbox-empty"><Inbox size={28} strokeWidth={1.3} /><h2>{filter ? 'No matching conversations' : needsReplyOnly ? 'Nothing waiting for a reply' : 'No conversations yet'}</h2><p>{filter ? 'Try a name or a word from the message.' : needsReplyOnly ? 'All drafts have been reviewed.' : 'Send a message from the Customer view to get started.'}</p></div>}</div>
+      <div className="inbox-list" aria-busy={inboxState === 'loading'}>{filtered.map(c => <button key={c.id} className={`conversation-item ${selected === c.id ? 'selected' : ''}`} aria-current={selected === c.id ? 'true' : undefined} onClick={() => setSelected(c.id)}><Avatar name={c.name} /><span className="conversation-copy"><span className="conversation-top"><strong>{c.name}</strong><time dateTime={c.last_activity_at}>{activityTime(c.last_activity_at)}</time></span><span className="conversation-preview">{c.preview}</span><span className="conversation-status">{c.pending_count > 0 ? <><span className="waiting-dot" />Needs reply</> : <><Check size={12} />Replied</>}</span></span></button>)}{inboxState === 'loading' && <div className="inbox-empty" role="status"><Spinner /><h2>Loading conversations…</h2></div>}{inboxState === 'error' && <div className="inbox-empty" role="alert"><h2>Couldn’t load conversations</h2><p>Please try again.</p><button className="policies-button" onClick={() => void refresh()}>Retry</button></div>}{inboxState === 'ready' && !filtered.length && <div className="inbox-empty"><Inbox size={28} strokeWidth={1.3} /><h2>{filter ? 'No matching conversations' : needsReplyOnly ? 'Nothing waiting for a reply' : 'No conversations yet'}</h2><p>{filter ? 'Try a name or a word from the message.' : needsReplyOnly ? 'All drafts have been reviewed.' : 'Send a message from the Customer view to get started.'}</p></div>}</div>
       <footer className="agent-account"><span className="account-avatar">{email[0].toUpperCase()}</span><div><strong>Agent account</strong><span>{email}</span></div><button className="icon-button" onClick={() => void logout()} aria-label="Sign out"><LogOut size={16} /></button></footer>
     </aside>
     <section className="agent-thread" aria-label="Selected conversation">
-      <header className="thread-header"><button className="icon-button inbox-back" onClick={() => { setSelected(null); selectedRef.current = null; }} aria-label="Back to inbox"><ArrowLeft size={20} /></button>{conversation ? <><Avatar name={conversation.name} /><div className="thread-person"><h2>{conversation.name}</h2><p>{conversation.phone}</p></div><button className="policies-button" aria-expanded={showPolicies} aria-controls="brand-policies" onClick={() => setShowPolicies(!showPolicies)}><BookOpen size={16} /><span>Policies</span></button></> : <h2>{loading ? 'Opening conversation…' : 'Conversations'}</h2>}</header>
+      <header className="thread-header"><button className="icon-button inbox-back" onClick={() => { setSelected(null); selectedRef.current = null; }} aria-label="Back to inbox"><ArrowLeft size={20} /></button>{conversation ? <><Avatar name={conversation.name} /><div className="thread-person"><h2>{conversation.name}</h2><p>{conversation.phone}</p></div><button className="policies-button" aria-expanded={showPolicies} aria-controls="brand-policies" onClick={() => setShowPolicies(!showPolicies)}><BookOpen size={16} /><span>Policies</span></button></> : <h2>{loading ? 'Opening conversationâ€¦' : 'Conversations'}</h2>}</header>
       {error && <div className="thread-notice"><ErrorNotice text={error} onClose={() => setError('')} /></div>}
       {approved && <div className="success-notice" role="status"><Check size={15} />Reply approved. The customer can see it now.</div>}
       {conversation ? <><Transcript key={conversation.id} messages={conversation.messages} customerName={conversation.name} agentView /><section className="reply-composer" aria-label="Review suggested reply">
